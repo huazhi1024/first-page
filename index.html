@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="share.css">
+    <title>AWCEQCodec</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        #layout {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        #title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #content img {
+            display: block;
+            margin: 20px auto;
+        }
+        .center {
+            text-align: center;
+        }
+        .image-row {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .image-row img {
+            max-width: 45%;
+            height: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        audio {
+            width: 100%;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="layout">
+        <div id="main">
+            <h1 id="title">Attention Weighting and Conditional Entropy-driven Quantization Loss for Neural Audio Codecs</h1>
+            <div id="content">
+                <h2>Abstract</h2>
+                <p>Existing end-to-end neural codecs have made great progress in preserving audio quality. Despite their success, they still face challenges in achieving accurate and efficient quantization. Specifically, these codecs often overlook which features have a greater impact on perceptual audio quality during quantization, leading to a quantization error distribution that fails to reflect the actual importance of latent features. They are also sensitive to unusual data points (outliers) because they use Mean Squared Error (MSE) to measure quantization errors, which can increase quantization noise or spectral artifacts. To address these limitations, we propose AW-CEQCodec which integrates an Attention Weighting (AW) module and a Conditional Entropy-driven Quantization (CEQ) loss. The AW enhances key regions of latent features before quantization, enabling more accurate quantizing critical features and reducing their quantization errors. After quantization, it restores global details from dequantized features, improving overall reconstruction. Moreover, the CEQ minimizes the uncertainty between latent and quantized features, effectively reflecting the distortion introduced by the quantization module. Experimental results on the CodecSuperb-STL dataset demonstrate that our method consistently outperforms baseline approaches, achieving superior audio quality at bitrates as low as 0.5 kbps, confirming its effectiveness in minimizing distortion and preserving perceptual quality.</p>
+                <div class="image-row">
+                    <img src="imgs/motivation.png" alt="Motivation of AW">
+                    <img src="imgs/AW-CEQCodec.png" alt="Overview of AW-CEQCodec">
+                </div>
+                
+                <h2>Demo of Speech reconstruction</h2>
+                <h3>testset1: Fluent Speech Commands</h3>
+                <p>GT</p>
+                <audio src="audios/2kbps-1kbps-0.5kbps-fluentspeechcommand/eg1/GT_wavs_speakers_7NqqnAOPVVSKnxyv_1f3fba10-4632-11e9-bc65-55b32b211b66.wav" controls></audio>
+                <div class="center">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>0.5kbps</th>
+                                <th>1kbps</th>
+                                <th>2kbps</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>EnCodec</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-fluentspeechcommand/eg1/encodec_0.5kbps_wavs_speakers_7NqqnAOPVVSKnxyv_1f3fba10-4632-11e9-bc65-55b32b211b66.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-fluentspeechcommand/eg1/encodec_1kbps_wavs_speakers_7NqqnAOPVVSKnxyv_1f3fba10-4632-11e9-bc65-55b32b211b66.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-fluentspeechcommand/eg1/encodec_2kbps_wavs_speakers_7NqqnAOPVVSKnxyv_1f3fba10-4632-11e9-bc65-55b32b211b66.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>FunCodec</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-fluentspeechcommand/eg1/funcodec_0.5kbps_wavs_speakers_7NqqnAOPVVSKnxyv_1f3fba10-4632-11e9-bc65-55b32b211b66.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-fluentspeechcommand/eg1/funcodec_1kbps_wavs_speakers_7NqqnAOPVVSKnxyv_1f3fba10-4632-11e9-bc65-55b32b211b66.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-fluentspeechcommand/eg1/funcodec_2kbps_wavs_speakers_7NqqnAOPVVSKnxyv_1f3fba10-4632-11e9-bc65-55b32b211b66.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>DAC</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-fluentspeechcommand/eg1/dac_0.5kbps_wavs_speakers_7NqqnAOPVVSKnxyv_1f3fba10-4632-11e9-bc65-55b32b211b66.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-fluentspeechcommand/eg1/dac_1kbps_wavs_speakers_7NqqnAOPVVSKnxyv_1f3fba10-4632-11e9-bc65-55b32b211b66.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-fluentspeechcommand/eg1/dac_2kbps_wavs_speakers_7NqqnAOPVVSKnxyv_1f3fba10-4632-11e9-bc65-55b32b211b66.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>AW-CEQCodec(ours)</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-fluentspeechcommand/eg1/ours_0.5kbps_wavs_speakers_7NqqnAOPVVSKnxyv_1f3fba10-4632-11e9-bc65-55b32b211b66.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-fluentspeechcommand/eg1/ours_1kbps_wavs_speakers_7NqqnAOPVVSKnxyv_1f3fba10-4632-11e9-bc65-55b32b211b66.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-fluentspeechcommand/eg1/ours_2kbps_wavs_speakers_7NqqnAOPVVSKnxyv_1f3fba10-4632-11e9-bc65-55b32b211b66.wav" controls></audio></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>testset2: libri2Mix_test</h3>
+                <p>GT</p>
+                <audio src="audios/2kbps-1kbps-0.5kbps-libri2Mix_test/eg1/GT_test1188-133604-0036_2961-960-0007.wav" controls></audio>
+                <div class="center">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>0.5kbps</th>
+                                <th>1kbps</th>
+                                <th>2kbps</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>EnCodec</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-libri2Mix_test/eg1/encodec_0.5kbps_test1188-133604-0036_2961-960-0007.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-libri2Mix_test/eg1/encodec_1kbps_test1188-133604-0036_2961-960-0007.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-libri2Mix_test/eg1/encodec_2kbps_test1188-133604-0036_2961-960-0007.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>FunCodec</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-libri2Mix_test/eg1/funcodec_0.5kbps_test1188-133604-0036_2961-960-0007.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-libri2Mix_test/eg1/funcodec_1kbps_test1188-133604-0036_2961-960-0007.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-libri2Mix_test/eg1/funcodec_2kbps_test1188-133604-0036_2961-960-0007.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>DAC</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-libri2Mix_test/eg1/dac_0.5kbps_test1188-133604-0036_2961-960-0007.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-libri2Mix_test/eg1/dac_1kbps_test1188-133604-0036_2961-960-0007.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-libri2Mix_test/eg1/dac_2kbps_test1188-133604-0036_2961-960-0007.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>AW-CEQCodec(ours)</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-libri2Mix_test/eg1/ours_0.5kbps_test1188-133604-0036_2961-960-0007.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-libri2Mix_test/eg1/ours_1kbps_test1188-133604-0036_2961-960-0007.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-libri2Mix_test/eg1/ours_2kbps_test1188-133604-0036_2961-960-0007.wav" controls></audio></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>testset3: Librispeech</h3>
+                <p>GT</p>
+                <audio src="audios/2kbps-1kbps-0.5kbps-librispeech/eg2/GT_test_other_1998-15444-0015.wav" controls></audio>
+                <div class="center">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>0.5kbps</th>
+                                <th>1kbps</th>
+                                <th>2kbps</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>EnCodec</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-librispeech/eg2/encodec_0.5kbps_test_other_1998-15444-0015.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-librispeech/eg2/encodec_1kbps_test_other_1998-15444-0015.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-librispeech/eg2/encodec_2kbps_test_other_1998-15444-0015.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>FunCodec</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-librispeech/eg2/funcodec_0.5kbps_test_other_1998-15444-0015.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-librispeech/eg2/funcodec_1kbps_test_other_1998-15444-0015.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-librispeech/eg2/funcodec_2kbps_test_other_1998-15444-0015.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>DAC</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-librispeech/eg2/dac_0.5kbps_test_other_1998-15444-0015.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-librispeech/eg2/dac_1kbps_test_other_1998-15444-0015.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-librispeech/eg2/dac_2kbps_test_other_1998-15444-0015.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>AW-CEQCodec(ours)</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-librispeech/eg2/ours_0.5kbps_test_other_1998-15444-0015.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-librispeech/eg2/ours_1kbps_test_other_1998-15444-0015.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-librispeech/eg2/ours_2kbps_test_other_1998-15444-0015.wav" controls></audio></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>testset4: quesst</h3>
+                <p>GT</p>
+                <audio src="audios/2kbps-1kbps-0.5kbps-quesst/eg1/GT_eval-quesst14_eval_0121.wav" controls></audio>
+                <div class="center">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>0.5kbps</th>
+                                <th>1kbps</th>
+                                <th>2kbps</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>EnCodec</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-quesst/eg1/encodec_0.5kbps_eval-quesst14_eval_0121.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-quesst/eg1/encodec_1kbps_eval-quesst14_eval_0121.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-quesst/eg1/encodec_2kbps_eval-quesst14_eval_0121.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>FunCodec</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-quesst/eg1/funcodec_0.5kbps_eval-quesst14_eval_0121.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-quesst/eg1/funcodec_1kbps_eval-quesst14_eval_0121.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-quesst/eg1/funcodec_2kbps_eval-quesst14_eval_0121.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>DAC</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-quesst/eg1/dac_0.5kbps_eval-quesst14_eval_0121.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-quesst/eg1/dac_1kbps_eval-quesst14_eval_0121.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-quesst/eg1/dac_2kbps_eval-quesst14_eval_0121.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>AW-CEQCodec(ours)</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-quesst/eg1/ours_0.5kbps_eval-quesst14_eval_0121.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-quesst/eg1/ours_1kbps_eval-quesst14_eval_0121.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-quesst/eg1/ours_2kbps_eval-quesst14_eval_0121.wav" controls></audio></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>testset5: snips</h3>
+                <p>GT</p>
+                <audio src="audios/2kbps-1kbps-0.5kbps-snips/eg1/GT_testAditi-snips-test-288.wav" controls></audio>
+                <div class="center">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>0.5kbps</th>
+                                <th>1kbps</th>
+                                <th>2kbps</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>EnCodec</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-snips/eg1/encodec_0.5kbps_testAditi-snips-test-288.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-snips/eg1/encodec_1kbps_testAditi-snips-test-288.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-snips/eg1/encodec_2kbps_testAditi-snips-test-288.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>FunCodec</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-snips/eg1/funcodec_0.5kbps_testAditi-snips-test-288.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-snips/eg1/funcodec_1kbps_testAditi-snips-test-288.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-snips/eg1/funcodec_2kbps_testAditi-snips-test-288.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>DAC</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-snips/eg1/dac_0.5kbps_testAditi-snips-test-288.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-snips/eg1/dac_1kbps_testAditi-snips-test-288.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-snips/eg1/dac_2kbps_testAditi-snips-test-288.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>AW-CEQCodec(ours)</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-snips/eg1/ours_0.5kbps_testAditi-snips-test-288.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-snips/eg1/ours_1kbps_testAditi-snips-test-288.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-snips/eg1/ours_2kbps_testAditi-snips-test-288.wav" controls></audio></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>testset6: vox_lingua_top10</h3>
+                <p>GT</p>
+                <audio src="audios/2kbps-1kbps-0.5kbps-vox_lingua_top10/eg1/GT_0A42eBNqp2Q__U__S0---0963.190-0970.840.wav" controls></audio>
+                <div class="center">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>0.5kbps</th>
+                                <th>1kbps</th>
+                                <th>2kbps</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>EnCodec</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-vox_lingua_top10/eg1/encodec_0.5kbps_0A42eBNqp2Q__U__S0---0963.190-0970.840.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-vox_lingua_top10/eg1/encodec_1kbps_0A42eBNqp2Q__U__S0---0963.190-0970.840.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-vox_lingua_top10/eg1/encodec_2kbps_0A42eBNqp2Q__U__S0---0963.190-0970.840.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>FunCodec</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-vox_lingua_top10/eg1/funcodec_0.5kbps_0A42eBNqp2Q__U__S0---0963.190-0970.840.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-vox_lingua_top10/eg1/funcodec_1kbps_0A42eBNqp2Q__U__S0---0963.190-0970.840.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-vox_lingua_top10/eg1/funcodec_2kbps_0A42eBNqp2Q__U__S0---0963.190-0970.840.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>DAC</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-vox_lingua_top10/eg1/dac_0.5kbps_0A42eBNqp2Q__U__S0---0963.190-0970.840.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-vox_lingua_top10/eg1/dac_1kbps_0A42eBNqp2Q__U__S0---0963.190-0970.840.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-vox_lingua_top10/eg1/dac_2kbps_0A42eBNqp2Q__U__S0---0963.190-0970.840.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>AW-CEQCodec(ours)</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-vox_lingua_top10/eg1/ours_0.5kbps_0A42eBNqp2Q__U__S0---0963.190-0970.840.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-vox_lingua_top10/eg1/ours_1kbps_0A42eBNqp2Q__U__S0---0963.190-0970.840.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-vox_lingua_top10/eg1/ours_2kbps_0A42eBNqp2Q__U__S0---0963.190-0970.840.wav" controls></audio></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+
+                <h3>testset7: voxceleb1</h3>
+                <p>GT</p>
+                <audio src="audios/2kbps-1kbps-0.5kbps-voxceleb1/eg1/GT_id10270+8jEAjG6SegY+00033.wav" controls></audio>
+                <div class="center">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>0.5kbps</th>
+                                <th>1kbps</th>
+                                <th>2kbps</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>EnCodec</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-voxceleb1/eg1/encodec_0.5kbps_id10270+8jEAjG6SegY+00033.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-voxceleb1/eg1/encodec_1kbps_id10270+8jEAjG6SegY+00033.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-voxceleb1/eg1/encodec_2kbps_id10270+8jEAjG6SegY+00033.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>FunCodec</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-voxceleb1/eg1/funcodec_0.5kbps_id10270+8jEAjG6SegY+00033.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-voxceleb1/eg1/funcodec_1kbps_id10270+8jEAjG6SegY+00033.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-voxceleb1/eg1/funcodec_2kbps_id10270+8jEAjG6SegY+00033.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>DAC</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-voxceleb1/eg1/dac_0.5kbps_id10270+8jEAjG6SegY+00033.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-voxceleb1/eg1/dac_1kbps_id10270+8jEAjG6SegY+00033.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-voxceleb1/eg1/dac_2kbps_id10270+8jEAjG6SegY+00033.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>AW-CEQCodec(ours)</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-voxceleb1/eg1/ours_0.5kbps_id10270+8jEAjG6SegY+00033.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-voxceleb1/eg1/ours_1kbps_id10270+8jEAjG6SegY+00033.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-voxceleb1/eg1/ours_2kbps_id10270+8jEAjG6SegY+00033.wav" controls></audio></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>testset8: crema_d</h3>
+                <p>GT</p>
+                <audio src="audios/2kbps-1kbps-0.5kbps-crema_d/eg1/GT_tfds_id_crema-d-test-tfrecord-00000-of-00004-167.wav" controls></audio>
+                <div class="center">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>0.5kbps</th>
+                                <th>1kbps</th>
+                                <th>2kbps</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>EnCodec</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-crema_d/eg1/encodec_0.5kbps_tfds_id_crema-d-test-tfrecord-00000-of-00004-167.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-crema_d/eg1/encodec_1kbps_tfds_id_crema-d-test-tfrecord-00000-of-00004-167.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-crema_d/eg1/encodec_2kbps_tfds_id_crema-d-test-tfrecord-00000-of-00004-167.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>FunCodec</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-crema_d/eg1/funcodec_0.5kbps_tfds_id_crema-d-test-tfrecord-00000-of-00004-167.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-crema_d/eg1/funcodec_1kbps_tfds_id_crema-d-test-tfrecord-00000-of-00004-167.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-crema_d/eg1/funcodec_2kbps_tfds_id_crema-d-test-tfrecord-00000-of-00004-167.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>DAC</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-crema_d/eg1/dac_0.5kbps_tfds_id_crema-d-test-tfrecord-00000-of-00004-167.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-crema_d/eg1/dac_1kbps_tfds_id_crema-d-test-tfrecord-00000-of-00004-167.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-crema_d/eg1/dac_2kbps_tfds_id_crema-d-test-tfrecord-00000-of-00004-167.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>AW-CEQCodec(ours)</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-crema_d/eg1/ours_0.5kbps_tfds_id_crema-d-test-tfrecord-00000-of-00004-167.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-crema_d/eg1/ours_1kbps_tfds_id_crema-d-test-tfrecord-00000-of-00004-167.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-crema_d/eg1/ours_2kbps_tfds_id_crema-d-test-tfrecord-00000-of-00004-167.wav" controls></audio></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Repeat similar structure for other test sets -->
+
+                <h2>Demo of Audio reconstruction</h2>
+                <h3>audioset1: ESC50</h3>
+                <p>GT</p>
+                <audio src="audios/2kbps-1kbps-0.5kbps-esc50/eg1/GT_1-101336-A-30.wav" controls></audio>
+                <div class="center">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>0.5kbps</th>
+                                <th>1kbps</th>
+                                <th>2kbps</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>EnCodec</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-esc50/eg1/encodec_0.5kbps_1-101336-A-30.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-esc50/eg1/encodec_1kbps_1-101336-A-30.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-esc50/eg1/encodec_2kbps_1-101336-A-30.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>FunCodec</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-esc50/eg1/funcodec_0.5kbps_1-101336-A-30.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-esc50/eg1/funcodec_1kbps_1-101336-A-30.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-esc50/eg1/funcodec_2kbps_1-101336-A-30.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>DAC</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-esc50/eg1/dac_0.5kbps_1-101336-A-30.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-esc50/eg1/dac_1kbps_1-101336-A-30.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-esc50/eg1/dac_2kbps_1-101336-A-30.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>AW-CEQCodec(ours)</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-esc50/eg1/ours_0.5kbps_1-101336-A-30.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-esc50/eg1/ours_1kbps_1-101336-A-30.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-esc50/eg1/ours_2kbps_1-101336-A-30.wav" controls></audio></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                
+                <h3>audioset2: FSD50K</h3>
+                <p>GT</p>
+                <audio src="audios/2kbps-1kbps-0.5kbps-FSD50K/eg1/GT_0.5kbps_423321.wav" controls></audio>
+                <div class="center">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>0.5kbps</th>
+                                <th>1kbps</th>
+                                <th>2kbps</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>EnCodec</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-FSD50K/eg1/encodec_0.5kbps_423321.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-FSD50K/eg1/encodec_1kbps_423321.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-FSD50K/eg1/encodec_2kbps_423321.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>FunCodec</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-FSD50K/eg1/funcodec_0.5kbps_423321.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-FSD50K/eg1/funcodec_1kbps_423321.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-FSD50K/eg1/funcodec_2kbps_423321.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>DAC</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-FSD50K/eg1/dac_0.5kbps_423321.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-FSD50K/eg1/dac_1kbps_423321.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-FSD50K/eg1/dac_2kbps_423321.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>AW-CEQCodec(ours)</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-FSD50K/eg1/ours_0.5kbps_423321.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-FSD50K/eg1/ours_1kbps_423321.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-FSD50K/eg1/ours_2kbps_423321.wav" controls></audio></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>audioset3: gunshot_triangulation</h3>
+                <p>GT</p>
+                <audio src="audios/2kbps-1kbps-0.5kbps-gunshot/eg1/GT_mic1_shot0_fid1.wav" controls></audio>
+                <div class="center">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>0.5kbps</th>
+                                <th>1kbps</th>
+                                <th>2kbps</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>EnCodec</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-gunshot/eg1/encodec_0.5kbps_mic1_shot0_fid1.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-gunshot/eg1/encodec_1kbps_mic1_shot0_fid1.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-gunshot/eg1/encodec_2kbps_mic1_shot0_fid1.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>FunCodec</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-gunshot/eg1/funcodec_0.5kbps_mic1_shot0_fid1.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-gunshot/eg1/funcodec_1kbps_mic1_shot0_fid1.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-gunshot/eg1/funcodec_2kbps_mic1_shot0_fid1.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>DAC</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-gunshot/eg1/dac_0.5kbps_mic1_shot0_fid1.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-gunshot/eg1/dac_1kbps_mic1_shot0_fid1.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-gunshot/eg1/dac_2kbps_mic1_shot0_fid1.wav" controls></audio></td>
+                            </tr>
+                            <tr>
+                                <th>AW-CEQCodec(ours)</th>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-gunshot/eg1/ours_0.5kbps_mic1_shot0_fid1.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-gunshot/eg1/ours_1kbps_mic1_shot0_fid1.wav" controls></audio></td>
+                                <td><audio src="audios/2kbps-1kbps-0.5kbps-gunshot/eg1/ours_2kbps_mic1_shot0_fid1.wav" controls></audio></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
+                <!-- Repeat similar structure for other audio sets -->
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>
